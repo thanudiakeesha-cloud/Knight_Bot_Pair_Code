@@ -1,7 +1,7 @@
 {
-  "name": "knight-bot",
+  "name": "infinity-md",
   "version": "1.0.0",
-  "description": "Knight Bot - WhatsApp Pair Code Generator",
+  "description": "Infinity MD - WhatsApp Pair Code Generator",
   "main": "index.js",
   "type": "module",
   "engines": {
@@ -11,7 +11,7 @@
     "start": "node index.js",
     "build": "echo 'No build step required'"
   },
-  "author": "Mr Unique Hacker",
+  "author": "Infinity MD",
   "license": "ISC",
   "dependencies": {
     "@whiskeysockets/baileys": "^6.7.21",
