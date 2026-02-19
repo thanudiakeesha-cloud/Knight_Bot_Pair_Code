@@ -75,24 +75,14 @@ router.get('/', async (req, res) => {
                         await InfinityMD.sendMessage(userJid, {
                             document: sessionKnight,
                             mimetype: 'application/json',
-                            fileName: 'creds.json'
+                            fileName: 'creds.json',
+                            caption: `🎉 *Your WhatsApp Session File is Ready!*\n\n📄 *File:* creds.json\n🔐 *Keep this file safe and secure*\n⚠️ *Do not share with anyone*\n\n📱 *Infinity MD Session Generator*\n┌┤✑  Thanks for using Infinity MD\n│└────────────┈ ⳹\n│©2025 Infinity MD\n└─────────────────┈ ⳹`
                         });
                         console.log("📄 Session file sent successfully");
 
-                        // Send video thumbnail with caption
-                        await InfinityMD.sendMessage(userJid, {
-                            image: { url: 'https://img.youtube.com/vi/-oz_u1iMgf8/maxresdefault.jpg' },
-                            caption: `🎬 *Infinity MD V2.0 Full Setup Guide!*\n\n🚀 Bug Fixes + New Commands + Fast AI Chat\n📺 Watch Now: https://youtu.be/NjOipI2AoMk`
-                        });
-                        console.log("🎬 Video guide sent successfully");
-
                         // Send warning message
                         await InfinityMD.sendMessage(userJid, {
-                            text: `⚠️Do not share this file with anybody⚠️\n 
-┌┤✑  Thanks for using Infinity MD
-│└────────────┈ ⳹        
-│©2025 Infinity MD 
-└─────────────────┈ ⳹\n\n`
+                            text: `⚠️ *Important Security Notice*\n\n🔒 *Your session file has been sent above*\n🚫 *Never share this file with anyone*\n🛡️ *Keep your account secure*\n\n📞 *Support:* @infinity_md`
                         });
                         console.log("⚠️ Warning message sent successfully");
 
