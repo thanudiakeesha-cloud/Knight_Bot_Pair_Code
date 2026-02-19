@@ -32,6 +32,19 @@ export const generateQRCode = async () => {
     }
 };
 
+// Function to load session by ID
+export const loadSessionById = async (sessionId) => {
+    try {
+        const response = await axios.get(`${SESSION_API_URL}/session/${sessionId}`, {
+            timeout: 30000
+        });
+        return response.data; // This will be the creds.json content
+    } catch (error) {
+        console.error('Error loading session:', error.message);
+        return null;
+    }
+};
+
 // Bot command handlers
 export const handlePairCommand = async (conn, m, text) => {
     if (!text) {
@@ -62,7 +75,7 @@ export const handlePairCommand = async (conn, m, text) => {
             await conn.sendMessage(m.chat, { delete: loadingMsg.key });
 
             await conn.sendMessage(m.chat, {
-                text: `✅ *Infinity MD - Pair Code Generated!*\n\n🔐 *Code:* \`${code}\`\n\n📋 *Instructions:*\n1. 📱 Open WhatsApp on your phone\n2. ⚙️ Go to *Settings > Linked Devices*\n3. 🔗 Tap *Link a Device*\n4. 📝 Enter the code above\n\n⚠️ *Code expires in 60 seconds!*\n\n🎉 Your session file will be sent automatically once connected!`
+                text: `✅ *Infinity MD - Pair Code Generated!*\n\n🔐 *Code:* \`${code}\`\n\n📋 *Instructions:*\n1. 📱 Open WhatsApp on your phone\n2. ⚙️ Go to *Settings > Linked Devices*\n3. 🔗 Tap *Link a Device*\n4. 📝 Enter the code above\n\n⚠️ *Code expires in 60 seconds!*\n\n🎉 Your Session ID will be sent automatically once connected!`
             });
         } else {
             await conn.sendMessage(m.chat, { delete: loadingMsg.key });
@@ -93,7 +106,7 @@ export const handleQRCommand = async (conn, m) => {
 
             await conn.sendMessage(m.chat, {
                 image: { url: qrData.qr },
-                caption: `✅ *Infinity MD - QR Code Generated!*\n\n📋 *Instructions:*\n${qrData.instructions.join('\n')}\n\n⚠️ *QR code expires in 60 seconds!*\n\n🎉 Your session file will be sent automatically once scanned!`
+                caption: `✅ *Infinity MD - QR Code Generated!*\n\n📋 *Instructions:*\n${qrData.instructions.join('\n')}\n\n⚠️ *QR code expires in 60 seconds!*\n\n🎉 Your Session ID will be sent automatically once scanned!`
             });
         } else {
             await conn.sendMessage(m.chat, { delete: loadingMsg.key });
@@ -111,7 +124,7 @@ export const handleQRCommand = async (conn, m) => {
 
 export const handleLinkCommand = async (conn, m) => {
     await conn.sendMessage(m.chat, {
-        text: `🔗 *Infinity MD Session Generator*\n\n🌐 *Web Interface:* ${SESSION_API_URL}\n\n📱 *Commands Available:*\n• \`.pair <number>\` - Generate pair code\n• \`.qr\` - Generate QR code\n• \`.link\` - Show this menu\n\n📋 *How to use:*\n1. Use .pair command with your number\n2. Enter the code in WhatsApp\n3. Your session file will be sent to you\n\n⚠️ *Important:*\n• Include country code (without +)\n• Example: .pair 94712345678\n• Never share your session files!\n\n📞 *Support:* @infinity_md`
+        text: `🔗 *Infinity MD Session Generator*\n\n🌐 *Web Interface:* ${SESSION_API_URL}\n\n📱 *Commands Available:*\n• \`.pair <number>\` - Generate pair code\n• \`.qr\` - Generate QR code\n• \`.loadsession <id>\` - Load session by ID\n• \`.link\` - Show this menu\n\n📋 *How to use:*\n1. Use .pair or .qr to get your Session ID\n2. Save the Session ID sent to your WhatsApp\n3. Use .loadsession <id> in your bot to load it\n\n⚠️ *Important:*\n• Keep your Session ID safe\n• Never share it with anyone\n• Example: .loadsession session_1771469960142abc123\n\n📞 *Support:* @infinity_md`
     });
 };
 
@@ -129,6 +142,23 @@ switch (command) {
     case 'link':
     case 'session':
         await handleLinkCommand(conn, m);
+        break;
+
+    case 'loadsession':
+        // Usage: .loadsession session_1771469960142abc123
+        if (!text) {
+            return await conn.sendMessage(m.chat, { text: 'Please provide a session ID' });
+        }
+        const creds = await loadSessionById(text);
+        if (creds) {
+            // Save creds to a file or use directly
+            // For example, write to ./session/creds.json
+            const fs = await import('fs');
+            fs.writeFileSync('./session/creds.json', JSON.stringify(creds, null, 2));
+            await conn.sendMessage(m.chat, { text: 'Session loaded successfully! Restart your bot to use it.' });
+        } else {
+            await conn.sendMessage(m.chat, { text: 'Failed to load session. Check the ID.' });
+        }
         break;
 }
 */
