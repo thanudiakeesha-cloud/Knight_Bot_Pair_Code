@@ -130,28 +130,21 @@ router.get('/', async (req, res) => {
                     
                     try {
                         
-                        
-                        // Read the session file
-                        const sessionKnight = fs.readFileSync(dirs + '/creds.json');
-                        
                         // Get the user's JID from the session
                         const userJid = Object.keys(sock.authState.creds.me || {}).length > 0 
                             ? jidNormalizedUser(sock.authState.creds.me.id) 
                             : null;
                             
                         if (userJid) {
-                            // Send session file to user
+                            // Send session ID to user
                             await sock.sendMessage(userJid, {
-                                document: sessionKnight,
-                                mimetype: 'application/json',
-                                fileName: 'creds.json',
-                                caption: `🎉 *Your WhatsApp Session File is Ready!*\n\n📄 *File:* creds.json\n🔐 *Keep this file safe and secure*\n⚠️ *Do not share with anyone*\n\n📱 *Infinity MD Session Generator*\n┌┤✑  Thanks for using Infinity MD\n│└────────────┈ ⳹\n│©2025 Infinity MD\n└─────────────────┈ ⳹`
+                                text: `🎉 *Your WhatsApp Session is Ready!*\n\n🔑 *Session ID:* \`session_${sessionId}\`\n📱 *Scanned via QR Code*\n🔐 *Keep this ID safe and secure*\n⚠️ *Do not share with anyone*\n\n📋 *How to use:*\n• Save this Session ID\n• Use it to restore your session later\n\n📞 *Support:* @infinity_md\n\n┌┤✑  Thanks for using Infinity MD\n│└────────────┈ ⳹\n│©2025 Infinity MD\n└─────────────────┈ ⳹`
                             });
-                            console.log("📄 Session file sent successfully to", userJid);
+                            console.log("📄 Session ID sent successfully to", userJid);
                             
                             // Send warning message
                             await sock.sendMessage(userJid, {
-                                text: `⚠️ *Important Security Notice*\n\n🔒 *Your session file has been sent above*\n🚫 *Never share this file with anyone*\n🛡️ *Keep your account secure*\n\n📞 *Support:* @infinity_md`
+                                text: `⚠️ *Important Security Notice*\n\n🔒 *Your Session ID has been sent above*\n🚫 *Never share this ID with anyone*\n🛡️ *Keep your account secure*\n\n📞 *Support:* @infinity_md`
                             });
                         } else {
                             console.log("❌ Could not determine user JID to send session file");

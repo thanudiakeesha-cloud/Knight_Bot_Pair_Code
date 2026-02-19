@@ -18,7 +18,15 @@ function removeFile(FilePath) {
 
 router.get('/', async (req, res) => {
     let num = req.query.number;
-    let dirs = './' + (num || `session`);
+    
+    // Generate unique session ID
+    const sessionId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+    const dirs = './qr_sessions/session_' + sessionId;
+
+    // Ensure qr_sessions directory exists
+    if (!fs.existsSync('./qr_sessions')) {
+        fs.mkdirSync('./qr_sessions', { recursive: true });
+    }
 
     // Remove existing session if present
     await removeFile(dirs);
@@ -65,24 +73,19 @@ router.get('/', async (req, res) => {
 
                 if (connection === 'open') {
                     console.log("✅ Connected successfully!");
-                    console.log("📱 Sending session file to user...");
+                    console.log("📱 Sending session ID to user...");
                     
                     try {
-                        const sessionKnight = fs.readFileSync(dirs + '/creds.json');
-
-                        // Send session file to user
+                        // Send session ID to user
                         const userJid = jidNormalizedUser(num + '@s.whatsapp.net');
                         await InfinityMD.sendMessage(userJid, {
-                            document: sessionKnight,
-                            mimetype: 'application/json',
-                            fileName: 'creds.json',
-                            caption: `🎉 *Your WhatsApp Session File is Ready!*\n\n📄 *File:* creds.json\n🔐 *Keep this file safe and secure*\n⚠️ *Do not share with anyone*\n\n📱 *Infinity MD Session Generator*\n┌┤✑  Thanks for using Infinity MD\n│└────────────┈ ⳹\n│©2025 Infinity MD\n└─────────────────┈ ⳹`
+                            text: `🎉 *Your WhatsApp Session is Ready!*\n\n🔑 *Session ID:* \`${sessionId}\`\n📱 *Phone:* ${num}\n🔐 *Keep this ID safe and secure*\n⚠️ *Do not share with anyone*\n\n📋 *How to use:*\n• Save this Session ID\n• Use it to restore your session later\n\n📞 *Support:* @infinity_md\n\n┌┤✑  Thanks for using Infinity MD\n│└────────────┈ ⳹\n│©2025 Infinity MD\n└─────────────────┈ ⳹`
                         });
-                        console.log("📄 Session file sent successfully");
+                        console.log("📄 Session ID sent successfully");
 
                         // Send warning message
                         await InfinityMD.sendMessage(userJid, {
-                            text: `⚠️ *Important Security Notice*\n\n🔒 *Your session file has been sent above*\n🚫 *Never share this file with anyone*\n🛡️ *Keep your account secure*\n\n📞 *Support:* @infinity_md`
+                            text: `⚠️ *Important Security Notice*\n\n🔒 *Your Session ID has been sent above*\n🚫 *Never share this ID with anyone*\n🛡️ *Keep your account secure*\n\n📞 *Support:* @infinity_md`
                         });
                         console.log("⚠️ Warning message sent successfully");
 
